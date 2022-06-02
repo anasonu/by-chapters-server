@@ -16,9 +16,6 @@ const isLoggedIn = expressjwt({
         if(tokenType !== "Bearer") {
             return null;
         };
-
-        console.log("=====> EL TOKEN FUE ENTREGADO <=======");
-
         return token;
     },
 });

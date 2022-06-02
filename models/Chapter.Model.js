@@ -10,11 +10,11 @@ const chapterSchema = new Schema({
         required: true,
     },
     book: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "book",
     },
     author: [{
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "author",
     }],
 })
