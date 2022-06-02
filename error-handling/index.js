@@ -9,6 +9,12 @@ module.exports = (app) => {
     // always logs the error
     console.error("ERROR", req.method, req.path, err);
 
+    if(err.status === 401)  {
+      res.status(401).json({
+        errorMessage: "Credenciales no validadas",
+      });
+    };
+
     // only render if the error ocurred before sending the response
     if (!res.headersSent) {
       res
