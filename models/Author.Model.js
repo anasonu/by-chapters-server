@@ -1,8 +1,9 @@
 const { Schema, model } = require("mongoose");
 
 const authorSchema = new Schema({
-    pseudonym: {
+    username: {
         type: String,
+        required: true,
     },
     name: {
         type: String,
@@ -18,7 +19,11 @@ const authorSchema = new Schema({
     password: {
         type: String,
         required: true,
-    }
+    },
+    admin: {
+        type: Boolean,
+        default: false,
+    },
 })
 
 const AuthorModel = model("author", authorSchema);
