@@ -7,7 +7,7 @@ const ChapterModel = require("../models/Chapter.Model.js");
 router.get("/:bookId", async (req, res, next) => {
   const { bookId } = req.params;
   try {
-    const response = await ChapterModel.find({ book: bookId });
+    const response = await ChapterModel.find({ book: bookId }).populate("book author");
     res.json(response);
   } catch (error) {
     next(error);
@@ -45,7 +45,7 @@ router.get("/details/:chapterId", isLoggedIn, async (req, res, next) => {
   const { chapterId } = req.params;
 
   try {
-    const response = await ChapterModel.findById(chapterId);
+    const response = await ChapterModel.findById(chapterId).populate("book author");
     res.json(response);
   } catch (error) {
     next(error);
