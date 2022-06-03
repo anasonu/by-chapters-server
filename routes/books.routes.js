@@ -1,8 +1,8 @@
 const router = require("express").Router();
 const BookModel = require("../models/Book.Model.js");
-const AuthorModel = require("../models/Author.Model");
 const isLoggedIn = require("../middlewares/isLoggedIn.js");
 const isCreator = require("../middlewares/isCreator.js");
+const ChapterModel = require("../models/Chapter.Model.js");
 
 // GET "/api/books" => Mostrar todos los libros
 router.get("/", async (req, res, next) => {
@@ -46,6 +46,7 @@ router.get("/:id", async (req, res, next) => {
 
   try {
     const response = await BookModel.findById(id);
+    // const chapterResponse = await ChapterModel.findById({book: bookId});
     res.json(response);
   } catch (error) {
     next(error);
@@ -56,7 +57,6 @@ router.get("/:id", async (req, res, next) => {
 router.patch("/:id", isLoggedIn, isCreator, async (req, res, next) => {
   const { id } = req.params;
   const { img, title, description, author } = req.body;
-  const { _id } = req.payload;
 
   try {
     if (!title || !description) {
@@ -81,8 +81,6 @@ router.patch("/:id", isLoggedIn, isCreator, async (req, res, next) => {
 // DELETE "/api/books/:id" => Eliminar libro
 router.delete("/:id", isLoggedIn, isCreator, async (req, res, next) => {
   const { id } = req.params;
-  const { author } = req.body;
-  const { _id } = req.payload;
 
   try {
     await BookModel.findByIdAndDelete(id);
