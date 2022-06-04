@@ -2,7 +2,6 @@ const router = require("express").Router();
 const BookModel = require("../models/Book.Model.js");
 const isLoggedIn = require("../middlewares/isLoggedIn.js");
 const isCreator = require("../middlewares/isCreator.js");
-const isAdmin = require("../middlewares/isAdmin.js");
 
 // GET "/api/books" => Mostrar todos los libros
 router.get("/", async (req, res, next) => {
@@ -46,7 +45,6 @@ router.get("/:id", async (req, res, next) => {
 
   try {
     const response = await BookModel.findById(id).populate("author");
-    // const chapterResponse = await ChapterModel.findById({book: bookId});
     res.json(response);
   } catch (error) {
     next(error);

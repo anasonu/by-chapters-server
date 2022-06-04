@@ -64,6 +64,14 @@ router.post("/signup", async (req, res, next) => {
 router.post("/login", async (req, res, next) => {
   const { email, password } = req.body;
 
+  if (!email || !password) {
+    res.status(400).json({
+      errorMessage:
+        "Los campos de email y contraseña deben estar rellenos",
+    });
+    return;
+  }
+
   try {
     const foundAuthor = await AuthorModel.findOne({ email });
     if (foundAuthor === null) {
