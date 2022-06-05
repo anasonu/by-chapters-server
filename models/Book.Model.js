@@ -13,10 +13,10 @@ const bookSchema = new Schema({
         type: String,
         required: true,
     },
-    author: [{
+    author: {
         type: Schema.Types.ObjectId,
         ref: "author",
-    }],
+    },
 })
 
 const BookModel = model("book", bookSchema);
