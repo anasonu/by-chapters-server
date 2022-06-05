@@ -2,6 +2,7 @@ const router = require("express").Router();
 const BookModel = require("../models/Book.Model.js");
 const isLoggedIn = require("../middlewares/isLoggedIn.js");
 const isCreator = require("../middlewares/isCreator.js");
+const uploader = require("../middlewares/uploader.js");
 
 // GET "/api/books" => Mostrar todos los libros
 router.get("/", async (req, res, next) => {
@@ -14,7 +15,7 @@ router.get("/", async (req, res, next) => {
 });
 
 // POST "/api/books/new-book" => Crear nuevo libro
-router.post("/new-book", isLoggedIn, async (req, res, next) => {
+router.post("/new-book", isLoggedIn, uploader.single("imagen"), async (req, res, next) => {
   const { img, title, description } = req.body;
   const { _id } = req.payload;
 
