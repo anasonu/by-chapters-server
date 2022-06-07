@@ -6,17 +6,17 @@ const chapterSchema = new Schema({
         required: true,
     },
     content: {
-        type: String,
+        type: Object,
         required: true,
     },
     book: {
         type: Schema.Types.ObjectId,
         ref: "book",
     },
-    author: [{
+    author: {
         type: Schema.Types.ObjectId,
         ref: "author",
-    }],
+    },
 })
 
 const ChapterModel = model("chapter", chapterSchema);
