@@ -3,6 +3,7 @@ const { Schema, model } = require("mongoose");
 const bookSchema = new Schema({
     img: {
         type: String,
+        default: "https://res.cloudinary.com/dcijwhvns/image/upload/v1654420227/by-chapters/default-cover_ogdgyj.jpg"
     },
     title: {
         type: String,
@@ -12,10 +13,10 @@ const bookSchema = new Schema({
         type: String,
         required: true,
     },
-    author: [{
+    author: {
         type: Schema.Types.ObjectId,
         ref: "author",
-    }],
+    },
 })
 
 const BookModel = model("book", bookSchema);

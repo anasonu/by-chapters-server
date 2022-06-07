@@ -2,7 +2,7 @@ const router = require("express").Router();
 const BookModel = require("../models/Book.Model.js");
 const isLoggedIn = require("../middlewares/isLoggedIn.js");
 const isCreator = require("../middlewares/isCreator.js");
-const isAdmin = require("../middlewares/isAdmin.js");
+const uploader = require("../middlewares/uploader.js");
 
 // GET "/api/books" => Mostrar todos los libros
 router.get("/", async (req, res, next) => {
@@ -15,30 +15,35 @@ router.get("/", async (req, res, next) => {
 });
 
 // POST "/api/books/new-book" => Crear nuevo libro
-router.post("/new-book", isLoggedIn, async (req, res, next) => {
-  const { img, title, description } = req.body;
-  const { _id } = req.payload;
+router.post(
+  "/new-book",
+  isLoggedIn,
+  uploader.single("img"),
+  async (req, res, next) => {
+    const { title, description } = req.body;
+    const { _id } = req.payload;
 
-  if (!title || !description) {
-    res.status(400).json({
-      errorMessage: "Los campos de título y descripción deben estar rellenos",
-    });
-    return;
+    if (!title || !description) {
+      res.status(400).json({
+        errorMessage: "Los campos de título y descripción deben estar rellenos",
+      });
+      return;
+    }
+
+    try {
+      const newBook = await BookModel.create({
+        img: req.file.path,
+        title,
+        description,
+        author: _id,
+      });
+
+      res.json(newBook);
+    } catch (error) {
+      next(error);
+    }
   }
-
-  try {
-    const newBook = await BookModel.create({
-      img,
-      title,
-      description,
-      author: _id,
-    });
-
-    res.json(newBook);
-  } catch (error) {
-    next(error);
-  }
-});
+);
 
 // GET "/api/books/:id" => Ver detalles de un libro
 router.get("/:id", async (req, res, next) => {
@@ -46,7 +51,6 @@ router.get("/:id", async (req, res, next) => {
 
   try {
     const response = await BookModel.findById(id).populate("author");
-    // const chapterResponse = await ChapterModel.findById({book: bookId});
     res.json(response);
   } catch (error) {
     next(error);
@@ -54,29 +58,35 @@ router.get("/:id", async (req, res, next) => {
 });
 
 // PATCH "/api/books/:id" => Editar un libro
-router.patch("/:id", isLoggedIn, isCreator, async (req, res, next) => {
-  const { id } = req.params;
-  const { img, title, description, author } = req.body;
+router.patch(
+  "/:id",
+  isLoggedIn,
+  isCreator,
+  uploader.single("img"),
+  async (req, res, next) => {
+    const { id } = req.params;
+    const { title, description, author } = req.body;
 
-  try {
-    if (!title || !description) {
-      res.status(400).json({
-        errorMessage: "El título y la descripción no pueden estar vacíos",
+    try {
+      if (!title || !description) {
+        res.status(400).json({
+          errorMessage: "El título y la descripción no pueden estar vacíos",
+        });
+        return;
+      }
+
+      await BookModel.findByIdAndUpdate(id, {
+        img: req.file.path,
+        title,
+        description,
+        author,
       });
-      return;
+      res.json("El libro se ha actualizado correctamente");
+    } catch (error) {
+      next(error);
     }
-
-    await BookModel.findByIdAndUpdate(id, {
-      img,
-      title,
-      description,
-      author,
-    });
-    res.json("El libro se ha actualizado correctamente");
-  } catch (error) {
-    next(error);
   }
-});
+);
 
 // DELETE "/api/books/:id" => Eliminar libro
 router.delete("/:id", isLoggedIn, isCreator, async (req, res, next) => {
