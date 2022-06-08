@@ -9,4 +9,7 @@ router.use("/books", booksRoutes);
 const chapterRoutes = require("./chapters.routes.js");
 router.use("/chapters", chapterRoutes);
 
+const uploaderRoutes = require("./uploader.routes");
+router.use("/uploader", uploaderRoutes);
+
 module.exports = router;

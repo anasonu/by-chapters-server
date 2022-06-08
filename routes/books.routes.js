@@ -18,9 +18,8 @@ router.get("/", async (req, res, next) => {
 router.post(
   "/new-book",
   isLoggedIn,
-  uploader.single("img"),
   async (req, res, next) => {
-    const { title, description } = req.body;
+    const { title, description, img } = req.body;
     const { _id } = req.payload;
 
     if (!title || !description) {
@@ -32,7 +31,7 @@ router.post(
 
     try {
       const newBook = await BookModel.create({
-        img: req.file.path,
+        img,
         title,
         description,
         author: _id,
@@ -62,10 +61,9 @@ router.patch(
   "/:id",
   isLoggedIn,
   isCreator,
-  uploader.single("img"),
   async (req, res, next) => {
     const { id } = req.params;
-    const { title, description, author } = req.body;
+    const { title, description, author, img } = req.body;
 
     try {
       if (!title || !description) {
@@ -76,7 +74,7 @@ router.patch(
       }
 
       await BookModel.findByIdAndUpdate(id, {
-        img: req.file.path,
+        img,
         title,
         description,
         author,
