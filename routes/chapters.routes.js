@@ -60,7 +60,6 @@ router.get("/details/:chapterId", isLoggedIn, async (req, res, next) => {
 router.patch(
   "/details/:chapterId",
   isLoggedIn,
-  isCreator,
   async (req, res, next) => {
     const { chapterId } = req.params;
     const { title, content, book, author } = req.body;
@@ -90,7 +89,6 @@ router.patch(
 router.delete(
   "/details/:chapterId",
   isLoggedIn,
-  isCreator,
   async (req, res, next) => {
     const { chapterId } = req.params;
 
