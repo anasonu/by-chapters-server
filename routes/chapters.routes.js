@@ -89,7 +89,6 @@ router.patch(
 router.delete(
   "/details/:chapterId",
   isLoggedIn,
-  isCreator,
   async (req, res, next) => {
     const { chapterId } = req.params;
 
