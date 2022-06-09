@@ -17,7 +17,7 @@ router.get("/:bookId", async (req, res, next) => {
 });
 
 // POST "/api/chapters/:bookId/new-chapter" => Crear un nuevo capítulo
-router.post("/:bookId/new-chapter", isLoggedIn, async (req, res, next) => {
+router.post("/:bookId/new-chapter", isLoggedIn, isCreator, async (req, res, next) => {
   const { bookId } = req.params;
   const { title, content } = req.body;
   const { _id } = req.payload;
@@ -60,7 +60,6 @@ router.get("/details/:chapterId", isLoggedIn, async (req, res, next) => {
 router.patch(
   "/details/:chapterId",
   isLoggedIn,
-  isCreator,
   async (req, res, next) => {
     const { chapterId } = req.params;
     const { title, content, book, author } = req.body;
@@ -90,7 +89,6 @@ router.patch(
 router.delete(
   "/details/:chapterId",
   isLoggedIn,
-  isCreator,
   async (req, res, next) => {
     const { chapterId } = req.params;
 

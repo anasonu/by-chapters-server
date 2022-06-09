@@ -2,7 +2,7 @@ const router = require("express").Router();
 const BookModel = require("../models/Book.Model.js");
 const isLoggedIn = require("../middlewares/isLoggedIn.js");
 const isCreator = require("../middlewares/isCreator.js");
-const uploader = require("../middlewares/uploader.js");
+let ObjectId = require("mongodb").ObjectId;
 
 // GET "/api/books" => Mostrar todos los libros
 router.get("/", async (req, res, next) => {
@@ -15,42 +15,37 @@ router.get("/", async (req, res, next) => {
 });
 
 // POST "/api/books/new-book" => Crear nuevo libro
-router.post(
-  "/new-book",
-  isLoggedIn,
-  uploader.single("img"),
-  async (req, res, next) => {
-    const { title, description } = req.body;
-    const { _id } = req.payload;
+router.post("/new-book", isLoggedIn, async (req, res, next) => {
+  const { title, description, img } = req.body;
+  const { _id } = req.payload;
 
-    if (!title || !description) {
-      res.status(400).json({
-        errorMessage: "Los campos de título y descripción deben estar rellenos",
-      });
-      return;
-    }
-
-    try {
-      const newBook = await BookModel.create({
-        img: req.file.path,
-        title,
-        description,
-        author: _id,
-      });
-
-      res.json(newBook);
-    } catch (error) {
-      next(error);
-    }
+  if (!title || !description) {
+    res.status(400).json({
+      errorMessage: "Los campos de título y descripción deben estar rellenos",
+    });
+    return;
   }
-);
-
-// GET "/api/books/:id" => Ver detalles de un libro
-router.get("/:id", async (req, res, next) => {
-  const { id } = req.params;
 
   try {
-    const response = await BookModel.findById(id).populate("author");
+    const newBook = await BookModel.create({
+      img,
+      title,
+      description,
+      author: _id,
+    });
+
+    res.json(newBook);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET "/api/books/:id" => Ver detalles de un libro
+router.get("/:bookId", async (req, res, next) => {
+  const { bookId } = req.params;
+
+  try {
+    const response = await BookModel.findById(bookId).populate("author");
     res.json(response);
   } catch (error) {
     next(error);
@@ -59,13 +54,13 @@ router.get("/:id", async (req, res, next) => {
 
 // PATCH "/api/books/:id" => Editar un libro
 router.patch(
-  "/:id",
+  "/:bookId",
   isLoggedIn,
   isCreator,
-  uploader.single("img"),
+
   async (req, res, next) => {
-    const { id } = req.params;
-    const { title, description, author } = req.body;
+    const { bookId } = req.params;
+    const { title, description, author, img } = req.body;
 
     try {
       if (!title || !description) {
@@ -75,8 +70,8 @@ router.patch(
         return;
       }
 
-      await BookModel.findByIdAndUpdate(id, {
-        img: req.file.path,
+      await BookModel.findByIdAndUpdate(bookId, {
+        img,
         title,
         description,
         author,
@@ -88,13 +83,25 @@ router.patch(
   }
 );
 
-// DELETE "/api/books/:id" => Eliminar libro
-router.delete("/:id", isLoggedIn, isCreator, async (req, res, next) => {
-  const { id } = req.params;
+// DELETE "/api/books/:bookId" => Eliminar libro
+router.delete("/:bookId", isLoggedIn, isCreator, async (req, res, next) => {
+  const { bookId } = req.params;
 
   try {
-    await BookModel.findByIdAndDelete(id);
+    await BookModel.findByIdAndDelete(bookId);
     res.json("El libro se ha eliminado correctamente");
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET "/api/books/author/:authorId" => Mostrar todos los libros de un autor
+router.get("/author/:authorId", async (req, res, next) => {
+  const { authorId } = req.params;
+
+  try {
+    const response = await BookModel.find({ author: ObjectId(authorId) });
+    res.json(response);
   } catch (error) {
     next(error);
   }
