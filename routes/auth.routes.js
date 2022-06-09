@@ -6,7 +6,7 @@ const isLoggedIn = require("../middlewares/isLoggedIn.js");
 
 // POST "/api/auth/signup" => Registrar un usuario
 router.post("/signup", async (req, res, next) => {
-  const { name, lastName, username, email, password } = req.body;
+  const { username, description, email, password } = req.body;
 
   if (!username || !email || !password) {
     res.status(400).json({
@@ -48,8 +48,7 @@ router.post("/signup", async (req, res, next) => {
 
     await AuthorModel.create({
       username,
-      name,
-      lastName,
+      description,
       email,
       password: hashPassword,
     });
@@ -93,8 +92,7 @@ router.post("/login", async (req, res, next) => {
       _id: foundAuthor._id,
       email: foundAuthor.email,
       username: foundAuthor.username,
-      name: foundAuthor.name,
-      lastName: foundAuthor.lastName,
+      description: foundAuthor.description,
       admin: foundAuthor.admin,
     };
 

@@ -5,10 +5,7 @@ const authorSchema = new Schema({
         type: String,
         required: true,
     },
-    name: {
-        type: String,
-    },
-    lastName: {
+    description: {
         type: String,
     },
     email: {
